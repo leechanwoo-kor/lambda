@@ -41,17 +41,27 @@ def publish_command(url, commands):
     # 디버그용
     print(f"Response from {url}: {r.text}")
 
-
 def get_all_commands(url):
-    existing_commands = requests.get(url, headers=HEADERS).json()
-    if not existing_commands:
+    r = requests.get(url, headers=HEADERS)
+    if r.status_code == 200:
+        return r.json()
+    else:
+        print(f"Failed to fetch commands with status code {r.status_code}")
         return []
 
-
-def delete_command(url):
+def delete_command(command_id):
+    url = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands/{command_id}"
     r = requests.delete(url, headers=HEADERS)
-    print(r.text)
+    if r.status_code == 204:
+        print(f"Command {command_id} deleted successfully")
+    else:
+        print(f"Failed to delete command {command_id}: {r.text}")
 
+def run_delete():
+    existing_commands = get_all_commands(global_url)
+    for command in existing_commands:
+        if command['name'] != '대화시작':  # '대화시작' 커맨드를 제외하고 삭제
+            delete_command(command['id'])
 
 def run():
     commands = [
@@ -68,4 +78,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    run_delete()
