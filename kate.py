@@ -1,7 +1,7 @@
 import json
 
 from constants import INTERACTION_CALLBACK_TYPE, REQUEST_TYPE
-from utils import verify_request_signature
+from utils import verify_request_signature, respond_pong, create_response
 
 
 def lambda_handler(event, context):
@@ -22,17 +22,9 @@ def lambda_handler(event, context):
         }
 
 
-def respond_pong():
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"type": INTERACTION_CALLBACK_TYPE.PONG}),
-        "headers": {"Content-Type": "application/json"},
-    }
-
-
 def handle_command(body):
     command_name = body["data"]["name"]
-    user_id = body["member"]["user"]["id"]
+    user_id = body["member"]["user"]["username"]
 
     if command_name == "대화시작":
         return create_choice_response(user_id)
@@ -42,27 +34,6 @@ def handle_command(body):
     return create_response(message)
 
 
-def create_response(message, image_url=None):
-    response_body = {
-        "type": INTERACTION_CALLBACK_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-        "data": {
-            "tts": False,
-            "content": message,
-            "embeds": [],
-        },
-    }
-
-    if image_url:
-        embed = {"image": {"url": image_url}}
-        response_body["data"]["embeds"].append(embed)
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(response_body),
-        "headers": {"Content-Type": "application/json"},
-    }
-
-
 def create_choice_response(user_id):
     return {
         "statusCode": 200,
@@ -70,7 +41,7 @@ def create_choice_response(user_id):
             {
                 "type": INTERACTION_CALLBACK_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
                 "data": {
-                    "content": "케이트와의 첫 만남이네요! 어떻게 하실 건가요?",
+                    "content": f"안녕하세요, @{user_id}님! 케이트와의 첫 만남이네요! 어떻게 하실 건가요?",
                     "components": [
                         {
                             "type": 1,
@@ -97,7 +68,7 @@ def create_choice_response(user_id):
 
 
 def handle_interaction(interaction):
-    user_id = interaction["member"]["user"]["id"]
+    user_id = interaction["member"]["user"]["username"]
     custom_id = interaction["data"]["custom_id"]
 
     return handle_interaction_response(user_id, custom_id)
