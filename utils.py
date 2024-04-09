@@ -3,7 +3,7 @@ from nacl.signing import VerifyKey
 from constants import INTERACTION_CALLBACK_TYPE
 
 
-DISCORD_PUBLIC_KEY = "059e2aa53828ecf2aebd55ce04f31837cd7e680a8d788540435c3b9f9cbef348"
+DISCORD_PUBLIC_KEY = "a6ff6f6bb111f5e00497b962ff8569f775c5bf6cee6840ad8edb85ac3a700b89"
 
 
 def verify_request_signature(event):
@@ -30,7 +30,15 @@ def respond_pong():
     }
 
 
-def create_response(message, image_url=None):
+def create_response(status_code, data):
+    return {
+        "statusCode": status_code,
+        "body": json.dumps(data),
+        "headers": {"Content-Type": "application/json"},
+    }
+
+
+def create_response_with_image(message, image_url):
     response_body = {
         "type": INTERACTION_CALLBACK_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
         "data": {
