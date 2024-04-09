@@ -37,7 +37,6 @@ def handle_command(body):
     if command_name == "대화시작":
         return create_choice_response(user_id)
 
-    # "대화시작" 커맨드 외에는 모두 같은 응답을 처리
     message = "무엇을 도와줄까요? 케이트는 여러분과의 대화를 기다리고 있어요!"
 
     return create_response(message)
@@ -53,7 +52,6 @@ def create_response(message, image_url=None):
         },
     }
 
-    # 이미지 URL이 제공되면 embed에 추가
     if image_url:
         embed = {"image": {"url": image_url}}
         response_body["data"]["embeds"].append(embed)
@@ -75,19 +73,19 @@ def create_choice_response(user_id):
                     "content": "케이트와의 첫 만남이네요! 어떻게 하실 건가요?",
                     "components": [
                         {
-                            "type": 1,  # ActionRow 타입
+                            "type": 1,
                             "components": [
                                 {
-                                    "type": 2,  # 버튼 타입
+                                    "type": 2,
                                     "label": "친절하게 인사하기",
-                                    "style": 1,  # 블루 컬러 스타일
-                                    "custom_id": "greet",  # 버튼 클릭 시 식별할 수 있는 ID
+                                    "style": 1,
+                                    "custom_id": "greet",
                                 },
                                 {
-                                    "type": 2,  # 버튼 타입
+                                    "type": 2,
                                     "label": "무시하고 지나가기",
-                                    "style": 4,  # 레드 컬러 스타일
-                                    "custom_id": "ignore",  # 버튼 클릭 시 식별할 수 있는 ID
+                                    "style": 4,
+                                    "custom_id": "ignore",
                                 },
                             ],
                         }
@@ -119,7 +117,6 @@ def handle_interaction_response(user_id, action_type):
     if extra_message:
         message += "\n" + extra_message
 
-    # 사용자 아이디와 현재 호감도 정보 추가
     current_score = user_states.get(user_id, 0)
     relationship_info = f"\n\n현재 사용자 ID: {user_id}\n호감도 점수: {current_score}"
     message += relationship_info
@@ -135,12 +132,12 @@ def handle_share_story_interaction(message, image_url=None):
             "content": message,
             "components": [
                 {
-                    "type": 1,  # ActionRow 타입
+                    "type": 1,
                     "components": [
                         {
-                            "type": 2,  # 버튼 타입
+                            "type": 2,
                             "label": "이야기 나누기1",
-                            "style": 1,  # 블루 컬러 스타일
+                            "style": 1,
                             "custom_id": "learn_more",
                         },
                         {
@@ -156,7 +153,6 @@ def handle_share_story_interaction(message, image_url=None):
         },
     }
 
-    # 이미지 URL이 제공되면 embed에 추가
     if image_url:
         embed = {"image": {"url": image_url}}
         response_body["data"]["embeds"].append(embed)
@@ -178,7 +174,6 @@ def update_relationship_score(user_id, score_change):
         f"Updated relationship score for {user_id} by {score_change}. Current score: {current_score}"
     )
 
-    # 관계 점수에 따른 추가 메시지
     if current_score > 20:
         extra_message = (
             "우리 사이가 많이 가까워진 것 같아요. 더 많은 이야기를 나누고 싶어요!"
@@ -189,6 +184,3 @@ def update_relationship_score(user_id, score_change):
         extra_message = ""
 
     return extra_message
-
-
-# 사용자와의 관계 점수를 저장하고 관리하는 예제 코드를 통해, 케이트와 사용자 사이의 상호작용을 보다 세밀하게 조정할 수 있습니다. 이를 통해 사용자는 더 개인화된 대화 경험을 할 수 있게 됩니다.
