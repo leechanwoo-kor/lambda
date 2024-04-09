@@ -5,12 +5,7 @@ from utils import verify_request_signature
 
 
 def lambda_handler(event, context):
-    if not verify_request_signature(event):
-        return {
-            "statusCode": 401,
-            "body": json.dumps({"message": "Unauthorized"}),
-            "headers": {"Content-Type": "application/json"},
-        }
+    verify_request_signature(event)
 
     body = json.loads(event["body"])
     if body.get("type") == REQUEST_TYPE.PING:
@@ -43,9 +38,7 @@ def handle_command(body):
         return create_choice_response(user_id)
 
     # "대화시작" 커맨드 외에는 모두 같은 응답을 처리
-    message = (
-        "아리가토~! 무엇을 도와줄까요? 케이트는 여러분과의 대화를 기다리고 있어요!"
-    )
+    message = "무엇을 도와줄까요? 케이트는 여러분과의 대화를 기다리고 있어요!"
 
     return create_response(message)
 
@@ -146,13 +139,13 @@ def handle_share_story_interaction(message, image_url=None):
                     "components": [
                         {
                             "type": 2,  # 버튼 타입
-                            "label": "더 알아보기",
+                            "label": "이야기 나누기1",
                             "style": 1,  # 블루 컬러 스타일
                             "custom_id": "learn_more",
                         },
                         {
                             "type": 2,
-                            "label": "이야기 나누기",
+                            "label": "이야기 나누기2",
                             "style": 1,
                             "custom_id": "share_story",
                         },

@@ -1,3 +1,4 @@
+import json
 from nacl.signing import VerifyKey
 
 
@@ -13,5 +14,8 @@ def verify_request_signature(event):
         verify_key.verify(f"{auth_ts}{raw_body}".encode(), bytes.fromhex(auth_sig))
     except Exception as e:
         print(f"Signature verification failed: {e}")
-        return False
-    return True
+        return {
+            "statusCode": 401,
+            "body": json.dumps({"message": "Unauthorized"}),
+            "headers": {"Content-Type": "application/json"},
+        }
