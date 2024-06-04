@@ -1,25 +1,5 @@
 import json
-from nacl.signing import VerifyKey
 from constants import INTERACTION_CALLBACK_TYPE
-
-
-DISCORD_PUBLIC_KEY = "a6ff6f6bb111f5e00497b962ff8569f775c5bf6cee6840ad8edb85ac3a700b89"
-
-
-def verify_request_signature(event):
-    try:
-        auth_sig = event["headers"].get("x-signature-ed25519")
-        auth_ts = event["headers"].get("x-signature-timestamp")
-        raw_body = event["body"]
-        verify_key = VerifyKey(bytes.fromhex(DISCORD_PUBLIC_KEY))
-        verify_key.verify(f"{auth_ts}{raw_body}".encode(), bytes.fromhex(auth_sig))
-    except Exception as e:
-        print(f"Signature verification failed: {e}")
-        return {
-            "statusCode": 401,
-            "body": json.dumps({"message": "Unauthorized"}),
-            "headers": {"Content-Type": "application/json"},
-        }
 
 
 def respond_pong():
