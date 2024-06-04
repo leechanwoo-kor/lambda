@@ -20,14 +20,13 @@ class APPLICATION_COMMAND_OPTION_TYPE:
     ATTACHMENT = 11
 
 
+TOKEN = '<your bot token here>'
 APPLICATION_ID = '<your application id here>'
 
-BOT_TOKEN = '<your bot token here>'
-
-HEADERS = {"Authorization": f"Bot {BOT_TOKEN}"}
+HEADERS = {"Authorization": f"Bot {TOKEN}"}
 
 # https://discord.com/developers/docs/interactions/slash-commands#registering-a-command
-global_url = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands"
+URL = f"https://discord.com/api/v8/applications/{APPLICATION_ID}/commands"
 
 
 def publish_command(url, commands):
@@ -58,7 +57,7 @@ def delete_command(command_id):
         print(f"Failed to delete command {command_id}: {r.text}")
 
 def run_delete():
-    existing_commands = get_all_commands(global_url)
+    existing_commands = get_all_commands(URL)
     for command in existing_commands:
         if command['name'] != '대화시작':  # '대화시작' 커맨드를 제외하고 삭제
             delete_command(command['id'])
@@ -71,7 +70,7 @@ def run():
         }
     ]
     for command in commands:
-        publish_command(global_url, command)
+        publish_command(URL, command)
         print()
 
     print(f"{len(commands)} published")
